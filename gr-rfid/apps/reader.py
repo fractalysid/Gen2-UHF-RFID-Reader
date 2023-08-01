@@ -60,10 +60,8 @@ class reader_top_block(gr.top_block):
         self.rx_gain = 20  # RX Gain (gain at receiver)
         self.tx_gain = 20  # RFX900 no Tx gain option
 
-        # self.usrp_address_source = "addr=192.168.10.3,recv_frame_size=256"
-        # self.usrp_address_sink   = "addr=192.168.10.3,recv_frame_size=256"
-        self.usrp_address_source = "addr=192.168.10.3,recv_frame_size=2944"     # 1472 is standard for 1GigE
-        self.usrp_address_sink = "addr=192.168.10.3,recv_frame_size=2944"       # 1472
+        self.usrp_address_source = "addr=192.168.10.3,recv_frame_size=256"  # 1472 is standard for 1GigE
+        self.usrp_address_sink = "addr=192.168.10.3,recv_frame_size=256"  # 1472
 
         # Each FM0 symbol consists of ADC_RATE/BLF samples (2e6/40e3 = 50 samples)
         # 10 samples per symbol after matched filtering and decimation
@@ -77,7 +75,7 @@ class reader_top_block(gr.top_block):
         self.file_sink_reader = blocks.file_sink(gr.sizeof_float * 1, "../misc/data/reader", False)
 
         ######## Blocks #########
-        self.matched_filter = filter.fir_filter_ccc(self.decim, self.num_taps);
+        self.matched_filter = filter.fir_filter_ccc(self.decim, self.num_taps)
         self.gate = rfid.gate(int(self.adc_rate / self.decim))
         self.tag_decoder = rfid.tag_decoder(int(self.adc_rate / self.decim))
         self.reader = rfid.reader(int(self.adc_rate / self.decim), int(self.dac_rate))
@@ -100,16 +98,16 @@ class reader_top_block(gr.top_block):
             self.connect(self.amp, self.to_complex)
             self.connect(self.to_complex, self.sink)
 
-          # File sinks for logging (Remove comments to log data)
-            # self.connect(self.source, self.file_sink_source)
+        # File sinks for logging (Remove comments to log data)
+        # self.connect(self.source, self.file_sink_source)
 
         else:  # Offline Data
             print("DEBUG")
 
             self.file_source = blocks.file_source(gr.sizeof_gr_complex * 1, "../misc/data/file_source_test",
-                                                  False)  ## instead of uhd.usrp_source
+                                                  False)    # instead of uhd.usrp_source
             self.file_sink = blocks.file_sink(gr.sizeof_gr_complex * 1, "../misc/data/file_sink",
-                                              False)  ## instead of uhd.usrp_sink
+                                              False)    # instead of uhd.usrp_sink
 
             ######## Connections #########
             self.connect(self.file_source, self.matched_filter)
