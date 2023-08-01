@@ -39,7 +39,7 @@ if(NOT rfid_sources)
 endif(NOT rfid_sources)
 
 add_library(gnuradio-rfid SHARED ${rfid_sources})
-target_link_libraries(gnuradio-rfid ${Boost_LIBRARIES} ${GNURADIO_ALL_LIBRARIES})
+target_link_libraries(gnuradio-rfid ${Boost_LIBRARIES} ${GNURADIO_ALL_LIBRARIES} gnuradio-runtime)
 set_target_properties(gnuradio-rfid PROPERTIES DEFINE_SYMBOL "gnuradio_rfid_EXPORTS")
 
 if(APPLE)
