@@ -102,8 +102,8 @@ https://github.com/nkargas/Gen2-UHF-RFID-Reader/issues/10
 <img src="./example_setup.png" width="300">
 
 ## Tested on:
-  Ubuntu 14.04 64-bit  
-  GNU Radio 3.7.4
+  Gentoo 2023 amd64 multilib gcc 12.3
+  GNU Radio 3.10.2
   
 ## If you use this software please cite:
 N. Kargas, F. Mavromatis and A. Bletsas, "Fully-Coherent Reader with Commodity SDR for Gen2 FM0 and Computational RFID", IEEE Wireless Communications Letters (WCL), Vol. 4, No. 6, pp. 617-620, Dec. 2015. 

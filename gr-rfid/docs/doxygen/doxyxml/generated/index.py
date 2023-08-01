@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3.11
 
 """
 Generated Mon Feb  9 19:08:05 2009 by generateDS.py.
@@ -6,11 +6,8 @@ Generated Mon Feb  9 19:08:05 2009 by generateDS.py.
 
 from xml.dom import minidom
 
-import os
-import sys
-import compound
+from . import indexsuper as supermod
 
-import indexsuper as supermod
 
 class DoxygenTypeSub(supermod.DoxygenType):
     def __init__(self, version=None, compound=None):
@@ -32,7 +29,10 @@ class DoxygenTypeSub(supermod.DoxygenType):
 
         return results
 
+
 supermod.DoxygenType.subclass = DoxygenTypeSub
+
+
 # end class DoxygenTypeSub
 
 
@@ -53,7 +53,10 @@ class CompoundTypeSub(supermod.CompoundType):
 
         return results
 
+
 supermod.CompoundType.subclass = CompoundTypeSub
+
+
 # end class CompoundTypeSub
 
 
@@ -62,16 +65,17 @@ class MemberTypeSub(supermod.MemberType):
     def __init__(self, kind=None, refid=None, name=''):
         supermod.MemberType.__init__(self, kind, refid, name)
 
+
 supermod.MemberType.subclass = MemberTypeSub
+
+
 # end class MemberTypeSub
 
 
 def parse(inFilename):
-
     doc = minidom.parse(inFilename)
     rootNode = doc.documentElement
     rootObj = supermod.DoxygenType.factory()
     rootObj.build(rootNode)
 
     return rootObj
-
