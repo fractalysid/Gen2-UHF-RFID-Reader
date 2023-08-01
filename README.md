@@ -9,16 +9,16 @@ The project is based on the RFID Gen2 Reader available at https://github.com/ran
 - Tag decoder : Responsible for frame synchronization, channel estimation, symbol period estimation and detection.  
 - Reader : Create/send reader commands.
 
-## Installation
+## Installation and run
+- git clone https://github.com/fractalysid/Gen2-UHF-RFID-Reader.git
+- cd Gen2-UHF-RFID-Reader/
+- ./build_image.sh
+- ./run.sh
 
-- install log4cpp (http://log4cpp.sourceforge.net/)
-- install UHD driver + GNU Radio using **wget http://www.sbrac.org/files/build-gnuradio && chmod a+x ./build-gnuradio && ./build-gnuradio**
-- cd Gen2-UHF-RFID-Reader/gr-rfid/  
-- mkdir build  
-- cd build/  
-- cmake ../ (logging should be enabled)  
-- sudo make install  
-- sudo ldconfig  
+## Configuration
+This is done through argument passing to the run.sh script (not yet implemented)
+
+----------------------------
 
 ## Configuration
 
