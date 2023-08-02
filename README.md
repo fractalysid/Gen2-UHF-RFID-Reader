@@ -15,9 +15,12 @@ No installation is required on the host system as everything happens inside a co
 - build_image.sh: builds the container where the application is built
 - run.sh: runs the application inside the container
 
+Remember to set all the scripts as executable with ```chmod +x *.sh```
+
 ```shell
 git clone https://github.com/fractalysid/Gen2-UHF-RFID-Reader.git
 cd Gen2-UHF-RFID-Reader/
+./install_dependencies.sh
 ./build_image.sh
 ./run.sh
 ```
