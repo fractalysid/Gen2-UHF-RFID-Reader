@@ -120,7 +120,7 @@ class reader_top_block(gr.top_block):
                 self.connect(self.source, self.file_sink_source)
 
         else:  # Offline Data
-            print("DEBUG")
+            print("* DEBUG")
 
             self.file_source = blocks.file_source(gr.sizeof_gr_complex * 1, "../misc/data/file_source_test",
                                                   False)  # instead of uhd.usrp_source

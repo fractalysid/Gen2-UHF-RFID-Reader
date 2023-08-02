@@ -23,8 +23,8 @@ cd Gen2-UHF-RFID-Reader/
 ```
 
 ## Configuration
-All configuration is done by modifying variables in configuration.env and build.env
-Modifying variables in build.env requires image to be rebuilt (with build_image.sh)
+All configuration is done by modifying variables in configuration.env and build.env.
+Modifying variables in build.env requires image to be rebuilt (launching ```./build_image.sh```).
 
 build.env
 - SLOTS: Number of different tags to be decoded (number of tags = 2^SLOTS) (default: 0)
@@ -44,6 +44,10 @@ configuration.env
 
 ## How to run
 
+```shell
+./run.sh
+```
+
 - Real time execution:
 
     Set ```DEBUG=False``` in configuration.env
@@ -52,7 +56,8 @@ configuration.env
 
 - Offline:
 
-    Set ```DEBUG=True``` in configuration.env (A test file already exists named file_source_test).  
+    Set ```DEBUG=True``` in configuration.env (A test file already exists named file_source_test).
+
     The reader works with offline traces without using a USRP.  
     The output after running the software with test file is:  
     
