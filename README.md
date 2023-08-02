@@ -9,39 +9,50 @@ The project is based on the RFID Gen2 Reader available at https://github.com/ran
 - Tag decoder : Responsible for frame synchronization, channel estimation, symbol period estimation and detection.  
 - Reader : Create/send reader commands.
 
-## Installation and run
-- git clone https://github.com/fractalysid/Gen2-UHF-RFID-Reader.git
-- cd Gen2-UHF-RFID-Reader/
-- ./build_image.sh
-- ./run.sh
+## Build and run
+No installation is required on the host system as everything happens inside a container.
+- install_dependencies.sh: installs podman/docker and tweak kernel parameters for running the program (with persistent configuration) (requires root privileges)
+- build_image.sh: builds the container where the application is built
+- run.sh: runs the application inside the container
+
+```shell
+git clone https://github.com/fractalysid/Gen2-UHF-RFID-Reader.git
+cd Gen2-UHF-RFID-Reader/
+./build_image.sh
+./run.sh
+```
 
 ## Configuration
-This is done through argument passing to the run.sh script (not yet implemented)
+All configuration is done by modifying variables in configuration.env and build.env
+Modifying variables in build.env requires image to be rebuilt (with build_image.sh)
 
-----------------------------
+build.env
+- SLOTS: Number of different tags to be decoded (number of tags = 2^SLOTS) (default: 0)
+- QUERIES: Max number of queries after which the program terminates (default: 1000)
 
-## Configuration
-
-- Set USRPN200 address in apps/reader.py (default: 192.168.10.2)
-- Set frequency in apps/reader.py (default: 910MHz)
-- Set tx amplitude in apps/reader.py (default: 0.1)
-- Set rx gain in apps/reader.py (default: 20)
-- Set maximum number of queries in include/global_vars.h (default:1000)
-- **To decode multiple tags**, change const int FIXED_Q so that you increase the number of slots per inventory round.
-  (In global_vars.h: const int FIXED_Q = 0;)
-
+configuration.env
+- USRP_ADDRESS: IP address of USRP (default: 192.168.10.3)
+- USRP_RX_GAIN: gain at receiver (default: 20)
+- USRP_TX_GAIN: gain at transmitter (default: 20)
+- USRP_FRAME_SIZE: receive buffer size (default: 256) 
+- USRP_SBX_DAUGHTERBOARD: set to True if using an SBX daughterboard
+- SIGNAL_FREQUENCY: frequency of the signal (default: 867e6 )
+- SIGNAL_AMPLITUDE: output signal amplitude (default: 1, range from 0 to 1)
+- DEBUG: run script on debug data, without using USRP (default: False)
+- SINK_LOGGING: save captured data on misc/data/source (default: False). May slow down execution
 
 
 ## How to run
 
-- Real time execution:  
-If you use an SBX daughterboard uncomment  #self.source.set_auto_dc_offset(False) in reader.py file
-cd Gen2-UHF-RFID-Reader/gr-rfid/apps/    
-sudo GR_SCHEDULER=STS nice -n -20 python ./reader.py     
-After termination, part of EPC message (EPC[104:111]) of identified Tags is printed.  
+- Real time execution:
 
-- Offline:  
-    Change DEBUG variable in apps/reader.py to TRUE (A test file already exists named file_source_test).  
+    Set ```DEBUG=False``` in configuration.env
+
+    After termination, part of EPC message (EPC[104:111]) of identified Tags is printed.  
+
+- Offline:
+
+    Set ```DEBUG=True``` in configuration.env (A test file already exists named file_source_test).  
     The reader works with offline traces without using a USRP.  
     The output after running the software with test file is:  
     
@@ -52,7 +63,7 @@ After termination, part of EPC message (EPC[104:111]) of identified Tags is prin
     | Number of unique tags : 1  
     | Tag ID : 27  Num of reads : 70  
  
-## Logging
+## Logging (to be implemented)
 
 - Configuration file : /home/username/.gnuradio/config.conf  
     Edit the above file and add the following lines  

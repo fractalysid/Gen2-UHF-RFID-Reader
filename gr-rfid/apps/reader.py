@@ -9,7 +9,7 @@ from gnuradio import digital
 from gnuradio import qtgui
 import rfid
 
-DEBUG = False
+from os import environ
 
 
 class reader_top_block(gr.top_block):
@@ -27,8 +27,10 @@ class reader_top_block(gr.top_block):
         self.source.set_center_freq(self.freq, 0)
         self.source.set_gain(self.rx_gain, 0)
         self.source.set_antenna("RX2", 0)
-        # TODO: uncomment if it does not work
-        # self.source.set_auto_dc_offset(False) # Uncomment this line for SBX daughterboard
+
+        if environ.get("USRP_SBX_DAUGHTERBOARD", False) == "True":
+            print("* SBX daughterboard")
+            self.source.set_auto_dc_offset(False)  # Uncomment this line for SBX daughterboard
 
     # Configure usrp sink
     def u_sink(self):
@@ -49,19 +51,34 @@ class reader_top_block(gr.top_block):
 
         # rt = gr.enable_realtime_scheduling()
 
+        # Reads environments variables
+        self.env_usrp_address = environ.get("USRP_ADDRESS", "192.168.10.3")
+        self.env_usrp_rx_gain = int(environ.get("USRP_RX_GAIN", 20))
+        self.env_usrp_tx_gain = int(environ.get("USRP_TX_GAIN", 20))
+        self.env_usrp_frame_size = int(environ.get("USRP_FRAME_SIZE", 256))
+
+        self.env_signal_freq = float(environ.get("SIGNAL_FREQUENCY", 867e6))
+        self.env_signal_ampl = float(environ.get("SIGNAL_AMPLITUDE", 0.1))
+        self.env_slots = int(environ.get("SLOTS", 1))
+
+        self.env_debug = bool(environ.get("DEBUG", False) == "True")
+        self.env_sink_logging = bool(environ.get("SINK_LOGGING", False) == "True")
+
         ######## Variables #########
         self.dac_rate = 1e6  # DAC rate
         self.adc_rate = 100e6 / 50  # ADC rate (2MS/s complex samples)
         self.decim = 5  # Decimation (downsampling factor)
         # self.ampl     = 0.1                # Output signal amplitude (signal power vary for different RFX900 cards)
-        self.ampl = 1  # Output signal amplitude (signal power vary for different RFX900 cards)
+        self.ampl = self.env_signal_ampl  # Output signal amplitude (signal power vary for different RFX900 cards)
         # self.freq     = 910e6              # Modulation frequency (can be set between 902-920)
-        self.freq = 867e6  # 867 MHz
-        self.rx_gain = 20  # RX Gain (gain at receiver)
-        self.tx_gain = 20  # RFX900 no Tx gain option
+        self.freq = self.env_signal_freq  # 867 MHz
+        self.rx_gain = self.env_usrp_rx_gain  # RX Gain (gain at receiver)
+        self.tx_gain = self.env_usrp_tx_gain  # RFX900 no Tx gain option
 
-        self.usrp_address_source = "addr=192.168.10.3,recv_frame_size=256"  # 1472 is standard for 1GigE
-        self.usrp_address_sink = "addr=192.168.10.3,recv_frame_size=256"  # 1472
+        self.usrp_address_source = "addr=%s,recv_frame_size=%i" % (
+            self.env_usrp_address, self.env_usrp_frame_size)  # 1472 is standard for 1GigE
+        self.usrp_address_sink = "addr=%s,recv_frame_size=%i" % (
+            self.env_usrp_address, self.env_usrp_frame_size)  # 1472
 
         # Each FM0 symbol consists of ADC_RATE/BLF samples (2e6/40e3 = 50 samples)
         # 10 samples per symbol after matched filtering and decimation
@@ -82,7 +99,7 @@ class reader_top_block(gr.top_block):
         self.amp = blocks.multiply_const_ff(self.ampl)
         self.to_complex = blocks.float_to_complex()
 
-        if (DEBUG == False):  # Real Time Execution
+        if self.env_debug == False:  # Real Time Execution
 
             # USRP blocks
             self.u_source()
@@ -98,16 +115,17 @@ class reader_top_block(gr.top_block):
             self.connect(self.amp, self.to_complex)
             self.connect(self.to_complex, self.sink)
 
-        # File sinks for logging (Remove comments to log data)
-        # self.connect(self.source, self.file_sink_source)
+            # File sinks for logging (Remove comments to log data)
+            if self.env_sink_logging == True:
+                self.connect(self.source, self.file_sink_source)
 
         else:  # Offline Data
             print("DEBUG")
 
             self.file_source = blocks.file_source(gr.sizeof_gr_complex * 1, "../misc/data/file_source_test",
-                                                  False)    # instead of uhd.usrp_source
+                                                  False)  # instead of uhd.usrp_source
             self.file_sink = blocks.file_sink(gr.sizeof_gr_complex * 1, "../misc/data/file_sink",
-                                              False)    # instead of uhd.usrp_sink
+                                              False)  # instead of uhd.usrp_sink
 
             ######## Connections #########
             self.connect(self.file_source, self.matched_filter)

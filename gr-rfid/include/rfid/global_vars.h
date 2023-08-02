@@ -69,11 +69,11 @@ namespace gr {
     // CONSTANTS (READER CONFIGURATION)
 
     // Fixed number of slots (2^(FIXED_Q))  
-    const int FIXED_Q              = 0;
+    const int FIXED_Q = 0;
 
     // Termination criteria
     // const int MAX_INVENTORY_ROUND = 50;
-    const int MAX_NUM_QUERIES     = 1000;     // Stop after MAX_NUM_QUERIES have been sent
+    const int MAX_NUM_QUERIES = 1000;     // Stop after MAX_NUM_QUERIES have been sent
 
     // valid values for Q
     const int Q_VALUE [16][4] =  
