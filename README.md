@@ -93,17 +93,20 @@ The reader may fail to decode a tag response for the following reasons
 
 3) Parameter tuning. The most important is self.ampl which controls the power of the transmitted signal (takes values between 0 and 1).
 
-If the reader still fails to decode tag responses, uncomment the following line in reader.py file
+If the reader still fails to decode tag responses, enables sink logging by setting
+```shell
+SINK_LOGGING=True
+SINK_SOURCE=True  
+```
+in configuration.env
 
- #self.connect(self.source, self.file_sink_source)
+Run the software for a few seconds (~5s). A file will be created in data directory named source. This file contains the received samples. You can plot the amplitude of the received samples using the script located in misc/code folder. The figure should be similar to the .eps figure included in the folder. Plotting the figure can give some indication regarding the problem. You can also plot the output of any block by enabling it in the configuration.env file. Output files will be created in the "data" folder:
 
-Run the software for a few seconds (~5s). A file will be created in misc/data directory named source. This file contains the received samples. You can plot the amplitude of the received samples using the script located in misc/code folder. The figure should be similar to the .eps figure included in the folder. Plotting the figure can give some indication regarding the problem. You can also plot the output of any block by uncommenting the corresponding line in the reader.py file. Output files will be created in misc/data folder:
-
-- /misc/data/source  
-- /misc/data/matched_filter  
-- /misc/data/gate 
-- /misc/data/decoder  
-- /misc/data/reader
+- data/source  
+- data/matched_filter  
+- data/gate 
+- data/decoder  
+- data/reader
 
 Useful discussions that cover common software issues and fixes:
 
@@ -122,9 +125,12 @@ https://github.com/nkargas/Gen2-UHF-RFID-Reader/issues/10
 <img src="./example_setup.png" width="300">
 
 ## Tested on:
-  Ubuntu 14.04 64-bit  
+  Ubuntu 16.04 64-bit  
   GNU Radio 3.7.4
-  
+
+## Troubleshooting
+If the building process is very slow, check [this](https://github.com/containers/podman/issues/13226) issue
+
 ## If you use this software please cite:
 N. Kargas, F. Mavromatis and A. Bletsas, "Fully-Coherent Reader with Commodity SDR for Gen2 FM0 and Computational RFID", IEEE Wireless Communications Letters (WCL), Vol. 4, No. 6, pp. 617-620, Dec. 2015. 
 
