@@ -122,9 +122,9 @@ class reader_top_block(gr.top_block):
         else:  # Offline Data
             print("* DEBUG")
 
-            self.file_source = blocks.file_source(gr.sizeof_gr_complex * 1, "../misc/data/file_source_test",
+            self.file_source = blocks.file_source(gr.sizeof_gr_complex * 1, "../misc/debug_data/file_source_test",
                                                   False)  # instead of uhd.usrp_source
-            self.file_sink = blocks.file_sink(gr.sizeof_gr_complex * 1, "../misc/data/file_sink",
+            self.file_sink = blocks.file_sink(gr.sizeof_gr_complex * 1, "../misc/debug_data/file_sink",
                                               False)  # instead of uhd.usrp_sink
 
             ######## Connections #########

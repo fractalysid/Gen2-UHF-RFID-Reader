@@ -15,4 +15,5 @@ podman run -it --rm --env-file ./configuration.env \
     --cap-add=sys_nice \
     --network=host \
     --name tag_reader \
+    --mount type=bind,source=data,target=/code/misc/data \
     localhost/$image_name:$image_tag
