@@ -12,6 +12,7 @@ RUN apt-get install -y build-essential git cmake uhd-host libuhd-dev libuhd003 \
 # Set up environment variables used during compilation
 ARG SLOTS=1
 ARG QUERIES=1000
+ARG LOGGING=False
 
 # Set up environment variables used at runtime by apps/reader.py
 ENV USRP_ADDRESS="192.168.10.3" \
@@ -41,7 +42,10 @@ RUN cd /code/ &&\
     make -j$(nproc) install &&\
     ldconfig
 
-# Setting working director
+# Create config file for gnuradio to enable logging
+RUN if [ "$LOGGING" = "True" ]; then mkdir -p /root/.gnuradio && echo "[LOG]\nlog_level = debug\ndebug_level = debug\nlog_file = stdout\ndebug_file = /code/misc/data/debug.log\n" >> /root/.gnuradio/config.conf; fi
+
+# Setting working directory
 WORKDIR /code/apps/
 
 # TODO: add code to increase niceness to -20
