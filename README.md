@@ -42,7 +42,11 @@ configuration.env
 - SIGNAL_FREQUENCY: frequency of the signal (default: 867e6 )
 - SIGNAL_AMPLITUDE: output signal amplitude (default: 1, range from 0 to 1)
 - DEBUG: run script on debug data, without using USRP (default: False)
-- SINK_LOGGING: save captured data on misc/data/source (default: False). May slow down execution
+- SINK_LOGGING: save captured data on misc/data/ (default: False). May slow down execution
+- SINK_SOURCE: save output data of source block, which contains the received samples
+- SINK_GATE: save output data of gate block
+- SINK_READER: save output data of reader block
+- SINK_MATCHED_FILTER: save output data of matched_filter block
 
 
 ## How to run
@@ -71,14 +75,11 @@ configuration.env
     | Number of unique tags : 1  
     | Tag ID : 27  Num of reads : 70  
  
-## Logging (to be implemented)
+## Logging
 
-- Configuration file : /home/username/.gnuradio/config.conf  
-    Edit the above file and add the following lines  
+- Set ```LOGGING=True``` in build.env and rebuild the image with ```./build_image.sh```
 
-    [LOG]  
-    debug_file = /PathToLogFile/Filename  
-    debug_level = info  
+    You can find the log output in data/debug.log
     
     Logging may cause latency issues if it is enabled during real time execution!
 

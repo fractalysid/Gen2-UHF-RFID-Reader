@@ -63,6 +63,10 @@ class reader_top_block(gr.top_block):
 
         self.env_debug = bool(environ.get("DEBUG", False) == "True")
         self.env_sink_logging = bool(environ.get("SINK_LOGGING", False) == "True")
+        self.env_sink_source = bool(environ.get("SINK_SOURCE", True) == "True")  # the only one True by default
+        self.env_sink_gate = bool(environ.get("SINK_GATE", False) == "True")
+        self.env_sink_reader = bool(environ.get("SINK_READER", False) == "True")
+        self.env_sink_matched_filter = bool(environ.get("SINK_MATCHED_FILTER", False) == "True")
 
         ######## Variables #########
         self.dac_rate = 1e6  # DAC rate
@@ -115,9 +119,16 @@ class reader_top_block(gr.top_block):
             self.connect(self.amp, self.to_complex)
             self.connect(self.to_complex, self.sink)
 
-            # File sinks for logging (Remove comments to log data)
+            # File sinks for logging
             if self.env_sink_logging == True:
-                self.connect(self.source, self.file_sink_source)
+                if self.env_sink_source:
+                    self.connect(self.source, self.file_sink_source)
+                if self.env_sink_gate:
+                    self.connect(self.gate, self.file_sink_gate)
+                if self.env_sink_reader:
+                    self.connect(self.reader, self.file_sink_reader)
+                if self.env_sink_matched_filter:
+                    self.connect(self.matched_filter, self.file_sink_matched_filter)
 
         else:  # Offline Data
             print("* DEBUG")
@@ -136,11 +147,9 @@ class reader_top_block(gr.top_block):
             self.connect(self.amp, self.to_complex)
             self.connect(self.to_complex, self.file_sink)
 
-        # File sinks for logging
-        # self.connect(self.gate, self.file_sink_gate)
+        # This must always be present
         self.connect((self.tag_decoder, 1), self.file_sink_decoder)  # (Do not comment this line)
-        # self.connect(self.file_sink_reader, self.file_sink_reader)
-        # self.connect(self.matched_filter, self.file_sink_matched_filter)
+
 
 
 if __name__ == '__main__':
