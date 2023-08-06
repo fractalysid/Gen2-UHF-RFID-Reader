@@ -10,9 +10,11 @@ The project is based on the RFID Gen2 Reader available at https://github.com/ran
 - Reader : Create/send reader commands.
 
 ## Build and run
-No installation is required on the host system as everything happens inside a container.
-- install_dependencies.sh: installs podman/docker and tweak kernel parameters for running the program (with persistent configuration) (requires root privileges)
-- build_image.sh: builds the container where the application is built
+No installation is required on the host system as both compilation and running takes advantage of containerization technology.
+Everything happens inside a container so any modern distribution with podman or docker in the repositories is enough to use the software
+without any hassle.
+- install_dependencies.sh: installs podman/docker and tweak kernel parameters for running the program. Configuration is made persistent. This step requires root privileges.
+- build_image.sh: builds the image where the application is built and installed
 - run.sh: runs the application inside the container
 
 
@@ -100,7 +102,13 @@ SINK_SOURCE=True
 ```
 in configuration.env
 
-Run the software for a few seconds (~5s). A file will be created in data directory named source. This file contains the received samples. You can plot the amplitude of the received samples using the script located in misc/code folder. The figure should be similar to the .eps figure included in the folder. Plotting the figure can give some indication regarding the problem. You can also plot the output of any block by enabling it in the configuration.env file. Output files will be created in the "data" folder:
+Run the software for a few seconds (~5s). A file for each selected block will be created in _data_ directory.
+The file _source_ contains the received samples.
+You can plot the amplitude of the received samples using the script located in the matlab/ folder.
+The figure should be similar to the .eps figure included in the gr-rfid/misc/code folder.
+Plotting the figure can give some indication regarding the problem.
+You can also plot the output of any block by enabling it in the configuration.env file.
+Output files will be created in the _data_ folder:
 
 - data/source  
 - data/matched_filter  
@@ -124,9 +132,9 @@ https://github.com/nkargas/Gen2-UHF-RFID-Reader/issues/10
 
 <img src="./example_setup.png" width="300">
 
-## Tested on:
+## Build/Run environment:
   Ubuntu 16.04 64-bit  
-  GNU Radio 3.7.4
+  GNU Radio 3.7.9
 
 ## Troubleshooting
 If the building process is very slow, check [this](https://github.com/containers/podman/issues/13226) issue
