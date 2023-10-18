@@ -1,5 +1,10 @@
 # Developed by: Nikos Kargas
+# Modified by: Mattia Buscema
 
+# used for the print function (with end= and sep)
+from __future__ import print_function
+
+# gnuradio libraries
 from gnuradio import gr
 from gnuradio import uhd
 from gnuradio import blocks
@@ -9,7 +14,11 @@ from gnuradio import digital
 from gnuradio import qtgui
 import rfid
 
+# used to read environmental variables
 from os import environ
+
+# used to make a time-based loop for the reading
+import time
 
 
 class reader_top_block(gr.top_block):
@@ -157,10 +166,12 @@ if __name__ == '__main__':
     main_block = reader_top_block()
     main_block.start()
 
-    while (1):
-        inp = raw_input("'Q' to quit \n")
-        if (inp == "q" or inp == "Q"):
-            break
+    timeout = int(environ.get("READING_TIMEOUT", 10))
+
+    while timeout > 0:
+        time.sleep(1)
+        timeout -= 1
+        print(timeout, end='', sep=' ')
 
     main_block.reader.print_results()
     main_block.stop()

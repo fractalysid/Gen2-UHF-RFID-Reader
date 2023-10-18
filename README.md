@@ -16,6 +16,7 @@ without any hassle.
 - install_dependencies.sh: installs podman/docker and tweak kernel parameters for running the program. Configuration is made persistent. This step requires root privileges.
 - build_image.sh: builds the image where the application is built and installed
 - run.sh: runs the application inside the container
+- benchmarking.sh: runs the application multiple times and report success rate for every reading session
 
 
 ```shell
@@ -40,10 +41,11 @@ configuration.env
 - USRP_RX_GAIN: gain at receiver (default: 20)
 - USRP_TX_GAIN: gain at transmitter (default: 20)
 - USRP_FRAME_SIZE: receive buffer size (default: 256) 
-- USRP_SBX_DAUGHTERBOARD: set to True if using an SBX daughterboard
+- USRP_SBX_DAUGHTERBOARD: set to True if using an SBX daughterboard (default: False)
 - SIGNAL_FREQUENCY: frequency of the signal (default: 867e6 )
 - SIGNAL_AMPLITUDE: output signal amplitude (default: 1, range from 0 to 1)
 - DEBUG: run script on debug data, without using USRP (default: False)
+- READING_TIMEOUT: defines the time window for the reading
 - SINK_LOGGING: save captured data on misc/data/ (default: False). May slow down execution
 - SINK_SOURCE: save output data of source block, which contains the received samples
 - SINK_GATE: save output data of gate block
@@ -95,7 +97,7 @@ The reader may fail to decode a tag response for the following reasons
 
 3) Parameter tuning. The most important is self.ampl which controls the power of the transmitted signal (takes values between 0 and 1).
 
-If the reader still fails to decode tag responses, enables sink logging by setting
+If the reader still fails to decode tag responses, enable sink logging by setting
 ```shell
 SINK_LOGGING=True
 SINK_SOURCE=True  
