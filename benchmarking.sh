@@ -15,6 +15,7 @@ echo "* Running $1 test(s)"
 
 for (( i = 0; i < TESTS; i++ ))
 do
+    READING_TIMEOUT=20
     echo -n "+ [$i] : "
     OUTPUT="$(./run.sh | tail -n 7 | tr -d "|" )"
     #echo "$OUTPUT"
