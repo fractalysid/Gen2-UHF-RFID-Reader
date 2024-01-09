@@ -224,14 +224,17 @@ namespace gr {
       {
         RN16_index = tag_sync(in,ninput_items[0]);
 
-        /*
-        for (int j = 0; j < ninput_items[0]; j ++ )
+        /**********************************************************************
+         * NOTICE: this will output I/Q samples of the RN16 to the sink_decoder file
+         * Gives image Fig 3.b of paper
+         **********************************************************************/
+        /*for (int j = 0; j < ninput_items[0]; j ++ )
         {
           out_2[written_sync] = in[j];
            written_sync ++;
         }    
-        produce(1,written_sync);
-        */
+        produce(1,written_sync);*/
+        //*********************************************************************
 
 
         for (float j = RN16_index; j < ninput_items[0]; j += n_samples_TAG_BIT/2 )
@@ -240,14 +243,14 @@ namespace gr {
           int k = round(j);
           RN16_samples_complex.push_back(in[k]);
 
-          //out_2[written_sync] = in[j];
-           //written_sync ++;
+           out_2[written_sync] = in[k];     // this was changed from in[j] to in[k]
+           written_sync ++;                 // commented
 
           if (number_of_half_bits == 2*(RN16_BITS-1))
           {
             //out_2[written_sync] = h_est;
-             //written_sync ++;  
-            //produce(1,written_sync);        
+            //written_sync ++;
+            produce(1,written_sync);        // commented
             break;
           }
         }    
