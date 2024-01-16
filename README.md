@@ -144,7 +144,10 @@ If the building process is very slow, check [this](https://github.com/containers
 ## If you use this software please cite:
 N. Kargas, F. Mavromatis and A. Bletsas, "Fully-Coherent Reader with Commodity SDR for Gen2 FM0 and Computational RFID", IEEE Wireless Communications Letters (WCL), Vol. 4, No. 6, pp. 617-620, Dec. 2015. 
 
-## Contact:
+## Contact (original version):
   Nikos Kargas (email: karga005@umn.edu)  
 
 This research has been co-financed by the European Union (European Social Fund-ESF) and Greek national funds through the Operational Program Education and Lifelong Learning of the National Strategic Reference Framework (NSRF) - Research Funding Program: THALES-Investing in knowledge society through the European Social Fund.
+
+## Contact (revised version):
+  Mattia Buscema (eamil: mattia.buscema@student.univaq.it)
