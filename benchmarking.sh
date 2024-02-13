@@ -2,6 +2,7 @@
 
 # Right now we only take into account the case of single tag reading
 
+# TODO: add run duration as an additional argument
 if [[ $# -lt 1 ]]
 then
     echo "Usage: $0 NUMBER_OF_TESTS_TO_RUN"

@@ -7,7 +7,7 @@ container_manager=
 image_name="gen2-uhf-rfid-tag-reader"
 
 # Tag of the image
-image_tag="v2023.08"
+image_tag="v2024.02"
 
 if command -v podman >/dev/null; then
     container_manager="podman"

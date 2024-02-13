@@ -8,7 +8,7 @@ x_inter_1 = fread(fi_1, 'float32');
 % if data is complex
 x_1 = x_inter_1(1:2:end) + 1i*x_inter_1(2:2:end);
 
-x_2 = x_1(31900:33020);
+x_2 = x_1(31958:33063);%(31900:33020);
 
 %plot(abs(x_1))
 figure
@@ -40,8 +40,9 @@ legend('Cluster 1','Cluster 2','Centroids',...
        'Location','NW')
 title 'Cluster Assignments and Centroids'
 hold off
-q
+
 dV = C(1,:) - C(2,:);
 
-rssi = 20*log(norm(dV));
-phase = atan(dV(2) / dV(1));
+rssi = 20*log(norm(dV))
+phase = atan(dV(2) / dV(1))
+phase_degree = phase * 360/(2*pi)
