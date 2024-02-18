@@ -12,6 +12,8 @@ from gnuradio import filter
 from gnuradio import analog
 from gnuradio import digital
 from gnuradio import qtgui
+from gnuradio.filter import firdes
+from gnuradio.fft import window
 import rfid
 
 # used to read environmental variables
@@ -80,10 +82,9 @@ class reader_top_block(gr.top_block):
         ######## Variables #########
         self.dac_rate = 1e6  # DAC rate
         self.adc_rate = 100e6 / 50  # ADC rate (2MS/s complex samples)
-        self.decim = 1  # Decimation (downsampling factor)
-        # self.ampl     = 0.1                # Output signal amplitude (signal power vary for different RFX900 cards)
+        self.decim = 5  # Decimation (downsampling factor)
+        self.samp_rate = int(self.adc_rate / self.decim)
         self.ampl = self.env_signal_ampl  # Output signal amplitude (signal power vary for different RFX900 cards)
-        # self.freq     = 910e6              # Modulation frequency (can be set between 902-920)
         self.freq = self.env_signal_freq  # 867 MHz
         self.rx_gain = self.env_usrp_rx_gain  # RX Gain (gain at receiver)
         self.tx_gain = self.env_usrp_tx_gain  # RFX900 no Tx gain option
@@ -99,6 +100,7 @@ class reader_top_block(gr.top_block):
 
         ######## File sinks for debugging (1 for each block) #########
         self.file_sink_source = blocks.file_sink(gr.sizeof_gr_complex * 1, "../misc/data/source", False)
+        self.file_sink_source_filtered = blocks.file_sink(gr.sizeof_gr_complex * 1, "../misc/data/source_filtered")
         self.file_sink_matched_filter = blocks.file_sink(gr.sizeof_gr_complex * 1, "../misc/data/matched_filter", False)
         self.file_sink_gate = blocks.file_sink(gr.sizeof_gr_complex * 1, "../misc/data/gate", False)
         self.file_sink_decoder = blocks.file_sink(gr.sizeof_gr_complex * 1, "../misc/data/decoder", False)
@@ -106,11 +108,35 @@ class reader_top_block(gr.top_block):
 
         ######## Blocks #########
         self.matched_filter = filter.fir_filter_ccc(self.decim, self.num_taps)
-        self.gate = rfid.gate(int(self.adc_rate / self.decim))
-        self.tag_decoder = rfid.tag_decoder(int(self.adc_rate / self.decim))
-        self.reader = rfid.reader(int(self.adc_rate / self.decim), int(self.dac_rate))
+        self.gate = rfid.gate(self.samp_rate)
+        self.tag_decoder = rfid.tag_decoder(self.samp_rate)
+        self.reader = rfid.reader(self.samp_rate, int(self.dac_rate))
         self.amp = blocks.multiply_const_ff(self.ampl)
         self.to_complex = blocks.float_to_complex()
+
+        # High-pass filter to remove DC subharmonics
+        self.high_pass_filter_0 = filter.fir_filter_ccf(
+            1,
+            firdes.high_pass(
+                1,
+                self.adc_rate, # full rate because we apply this before decimations
+                600,
+                200,
+                window.WIN_HAMMING,
+                6.76))
+
+        self.band_reject_filter_0 = filter.fir_filter_ccf(
+            1,
+            firdes.band_reject(
+                1,
+                self.adc_rate,  # full rate because we apply this before decimations
+                50,
+                450,
+                100,
+                window.WIN_HAMMING,
+                6.76))
+
+        #self.dc_blocker_xx_0 = filter.dc_blocker_cc(32, True)
 
         if self.env_debug == False:  # Real Time Execution
 
@@ -119,19 +145,44 @@ class reader_top_block(gr.top_block):
             self.u_sink()
 
             ######## Connections #########
-            self.connect(self.source, self.matched_filter)
+            #self.connect(self.source, self.matched_filter)
+            # With the filter here, it does not work (no queries are sent)
+            #self.connect(self.source, self.high_pass_filter_0)
+            #self.connect(self.source, self.dc_blocker_xx_0)
+            #self.connect(self.dc_blocker_xx_0, self.high_pass_filter_0)
+            #self.connect(self.high_pass_filter_0, self.matched_filter)
+            #self.connect(self.dc_blocker_xx_0, self.matched_filter)
+            self.connect(self.source, self.band_reject_filter_0)
+            self.connect(self.band_reject_filter_0, self.matched_filter)
+
             self.connect(self.matched_filter, self.gate)
 
+            #self.connect(self.matched_filter, self.high_pass_filter_0)
+            #self.connect(self.high_pass_filter_0, self.gate)
+
             self.connect(self.gate, self.tag_decoder)
+
+            #self.connect(self.gate, self.high_pass_filter_0)
+            #self.connect(self.high_pass_filter_0, self.tag_decoder)
+
             self.connect((self.tag_decoder, 0), self.reader)
             self.connect(self.reader, self.amp)
+
+            #self.connect(self.reader, self.high_pass_filter_1)
+            #self.connect(self.high_pass_filter_1, self.amp)
             self.connect(self.amp, self.to_complex)
+            #self.connect(self.amp, self.high_pass_filter_1)
+            #self.connect(self.high_pass_filter_1, self.to_complex)
+
             self.connect(self.to_complex, self.sink)
 
             # File sinks for logging
             if self.env_sink_logging == True:
                 if self.env_sink_source:
                     self.connect(self.source, self.file_sink_source)
+                    #self.connect(self.high_pass_filter_0, self.file_sink_source_filtered)
+                    self.connect(self.band_reject_filter_0, self.file_sink_source_filtered)
+                    #self.connect(self.dc_blocker_xx_0, self.file_sink_source_filtered)
                 if self.env_sink_gate:
                     self.connect(self.gate, self.file_sink_gate)
                 if self.env_sink_reader:

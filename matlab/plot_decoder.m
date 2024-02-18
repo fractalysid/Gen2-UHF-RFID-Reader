@@ -10,7 +10,7 @@ x1 = x_inter_1(1:2:end) + 1i*x_inter_1(2:2:end);
 
 % We have groups of 32 samples for every inventory round
 % Let's calc the arithmetic mean of rssi and phase
-rounds = length(x1)/32;
+rounds = round(length(x1)/32) - 1;
 rssi = zeros(1, rounds);
 phase = zeros(1, rounds);
 degree = zeros(1, rounds);
@@ -57,7 +57,7 @@ for i = 1:rounds
 
     rssi(i) = 20*log(norm(dV));
     phase(i) = atan(dV(2) / dV(1));
-    degree(i) = phase(i) * 360/(2*pi)
+    degree(i) = phase(i) * 360/(2*pi);
 end
 
 rssi_mean = mean(rssi)
