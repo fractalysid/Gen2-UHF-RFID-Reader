@@ -2,23 +2,20 @@ clc
 clear all
 close all
 
-f1 = fopen('../data/source','rb');
+%f1 = fopen('../data/source','rb');
+f1 = fopen('../data/decoder','rb');
 x_inter_1 = fread(f1, 'float32');
 
 % if data is complex
 x1 = x_inter_1(1:2:end) + 1i*x_inter_1(2:2:end);
 
-A1 = x1(32255:33423);
-A2 = x1(47132:48295);
-A3 = x1(62200:63314);
-A4 = x1(77316:78437);
-%A5 = x1(92160:93303);
+%A1 = x1(32255:33423);
+%A2 = x1(47132:48295);
+%A3 = x1(62200:63314);
+%A4 = x1(77316:78437);
 
-x2 = vertcat(A1, A2, A3, A4); %, A5);
-%x2 = x1;
-
-% 50 campioni per simbolo, si campiona a metà simbolo, prendo 2 campioni per ogni simbolo
-samples = x2(1:25:end);
+%x2 = vertcat(A1, A2, A3, A4);
+x2 = x1;
 
 x2r = real(x2);
 x2i = imag(x2);

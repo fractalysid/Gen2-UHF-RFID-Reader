@@ -12,5 +12,5 @@ plot(abs(x1), "b");
 title("Amiezza del segnale");
 xlabel('Campioni (2MHz sampling rate)');
 ylabel('Ampiezza');
-%legend("Location", "northeast");
+%legend("Location", "northeast")z;
 xlim([16000, 200000]);
