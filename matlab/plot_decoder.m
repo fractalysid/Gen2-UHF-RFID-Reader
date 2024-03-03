@@ -15,6 +15,9 @@ rssi = zeros(1, rounds);
 phase = zeros(1, rounds);
 degree = zeros(1, rounds);
 
+%figure
+%plot(real(x1), imag(x1), "o");
+
 for i = 1:rounds
 
     x2 = x1((i*32-32+1):(32*i));
@@ -62,4 +65,4 @@ end
 
 rssi_mean = mean(rssi)
 phase_mean = mean(phase);
-phase_degree = phase_mean * 360/(2*pi)
+phase_degree = phase_mean * 180/pi

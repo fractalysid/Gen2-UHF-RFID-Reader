@@ -16,4 +16,5 @@ podman run -it --rm --env-file ./configuration.env \
     --network=host \
     --name tag_reader \
     --mount type=bind,source=data,target=/code/misc/data \
+    --replace \
     localhost/$image_name:$image_tag

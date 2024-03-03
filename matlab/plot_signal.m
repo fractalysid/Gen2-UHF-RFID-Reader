@@ -41,40 +41,28 @@ imagx2 = imag(x_2);
 %plot(imag(x_2), "green");
 %hold off
 
-%legend("real X", "imag X", "real Y", "imag Y");
-
-%figure(1);
-%hold on;
-%scatter(realx1, imagx1, 'filled', 'MarkerFaceColor', 'blue');
-%figure(2);
-%scatter(realx2, imagx2, "+", 'MarkerFaceColor', 'red');
-%legend("X", "Y");
-%hold off;
-
+% ------------------------------------------------
 % Parametri del filtro
 fs = 2e6; % Frequenza di campionamento (2 MHz)
-f_cutoff = 100; % Frequenza di taglio del filtro passa-alto (200 Hz)
-N = 1000; % Lunghezza del filtro (numero di coefficienti)
+fc1 = 300;
+fc2 = 2600;
+% Frequenze normalizzate
+Wn1 = fc1 / (fs/2);
+Wn2 = fc2 / (fs/2);
 
-% Calcolo della frequenza di taglio normalizzata
-f_cutoff_norm = f_cutoff / (fs/2);
+N = fs/128; % Lunghezza del filtro (numero di coefficienti)
 
 % Generazione della risposta impulsiva del filtro FIR
-h = fir1(N, f_cutoff_norm, 'high');
+b = fir1(N, [Wn1 Wn2], "stop");
 
-% Visualizzazione della risposta in frequenza del filtro
-[freq_response, freq] = freqz(h, 1, 1024, fs);
-%plot(freq, 20*log10(abs(freq_response)));
-%title('Risposta in Frequenza del Filtro Passa-Alto');
-%xlabel('Frequenza (Hz)');
-%ylabel('Attenuazione (dB)');
-%grid on;
-%b = fir1(1000, [Wn1 Wn2], "stop");
-%b = fir1(10, Wn2, "high");
-%freqz(b, 1, 1024, Fs)
+y_1 = filter(b, 1, x_1);
 
-y_1 = filter(h, 1, x_1);
-
-plot(abs(x_1), "b")
+% Visualizza l'ampiezza dei segnali
+figure;
 hold on
-%plot(abs(y_1), "r")
+plot(abs(x_1), "b", "DisplayName", "Unfiltered");
+plot(abs(y_1), "r", "DisplayName", "400-2600Hz stopband");
+title("Ampiezza del segnale");
+xlabel('Campioni (2MHz sampling rate)');
+ylabel('Ampiezza');
+legend("Location", "northeast");
