@@ -82,7 +82,7 @@ class reader_top_block(gr.top_block):
         ######## Variables #########
         self.dac_rate = 1e6  # DAC rate
         self.adc_rate = 100e6 / 50  # ADC rate (2MS/s complex samples)
-        self.decim = 5  # Decimation (downsampling factor)
+        self.decim = 1  # Decimation (downsampling factor)
         self.samp_rate = int(self.adc_rate / self.decim)
         self.ampl = self.env_signal_ampl  # Output signal amplitude (signal power vary for different RFX900 cards)
         self.freq = self.env_signal_freq  # 867 MHz
@@ -120,19 +120,19 @@ class reader_top_block(gr.top_block):
             firdes.high_pass(
                 1,
                 self.adc_rate, # full rate because we apply this before decimations
-                600,
-                200,
+                150,
+                100,
                 window.WIN_HAMMING,
                 6.76))
 
         self.band_reject_filter_0 = filter.fir_filter_ccf(
-            1,
+            5,
             firdes.band_reject(
                 1,
                 self.adc_rate,  # full rate because we apply this before decimations
-                50,
-                450,
-                100,
+                20,
+                70,
+                20,
                 window.WIN_HAMMING,
                 6.76))
 
@@ -145,15 +145,15 @@ class reader_top_block(gr.top_block):
             self.u_sink()
 
             ######## Connections #########
-            #self.connect(self.source, self.matched_filter)
+            self.connect(self.source, self.matched_filter)
             # With the filter here, it does not work (no queries are sent)
             #self.connect(self.source, self.high_pass_filter_0)
             #self.connect(self.source, self.dc_blocker_xx_0)
             #self.connect(self.dc_blocker_xx_0, self.high_pass_filter_0)
             #self.connect(self.high_pass_filter_0, self.matched_filter)
             #self.connect(self.dc_blocker_xx_0, self.matched_filter)
-            self.connect(self.source, self.band_reject_filter_0)
-            self.connect(self.band_reject_filter_0, self.matched_filter)
+            #self.connect(self.source, self.band_reject_filter_0)
+            #self.connect(self.band_reject_filter_0, self.matched_filter)
 
             self.connect(self.matched_filter, self.gate)
 
@@ -181,7 +181,7 @@ class reader_top_block(gr.top_block):
                 if self.env_sink_source:
                     self.connect(self.source, self.file_sink_source)
                     #self.connect(self.high_pass_filter_0, self.file_sink_source_filtered)
-                    self.connect(self.band_reject_filter_0, self.file_sink_source_filtered)
+                    #self.connect(self.band_reject_filter_0, self.file_sink_source_filtered)
                     #self.connect(self.dc_blocker_xx_0, self.file_sink_source_filtered)
                 if self.env_sink_gate:
                     self.connect(self.gate, self.file_sink_gate)
