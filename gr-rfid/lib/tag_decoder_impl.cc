@@ -229,12 +229,12 @@ namespace gr {
          * Gives image Fig 3.b of paper
          * https://github.com/nkargas/Gen2-UHF-RFID-Reader/issues/9#issuecomment-546449809
          **********************************************************************/
-        for (int j = 0; j < ninput_items[0]; j ++ )
+        /*for (int j = 0; j < ninput_items[0]; j ++ )
         {
           out_2[written_sync] = in[j];
           written_sync ++;
         }
-        produce(1,written_sync);
+        produce(1,written_sync);*/
         //*********************************************************************
 
 
@@ -244,14 +244,14 @@ namespace gr {
           int k = round(j);
           RN16_samples_complex.push_back(in[k]);
 
-           //out_2[written_sync] = in[k];     // UNCOMMENT for fig 3.c
-           //written_sync ++;                 // UNCOMMENT for fig 3.c
+           out_2[written_sync] = in[k];     // UNCOMMENT for fig 3.c
+           written_sync ++;                 // UNCOMMENT for fig 3.c
 
           if (number_of_half_bits == 2*(RN16_BITS-1))
           {
             //out_2[written_sync] = h_est;
             //written_sync ++;
-            //produce(1,written_sync);        // UNCOMMENT for fig 3.c
+            produce(1,written_sync);        // UNCOMMENT for fig 3.c
             break;
           }
         }    
