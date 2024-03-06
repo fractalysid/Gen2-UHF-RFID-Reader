@@ -5,12 +5,12 @@ close all
 % Numero di misure per ogni setup
 measurements = 10;
 % Numero di differenti setup
-setups = 7;
-
-% Set to true to use "decoder" file instead of "source" file
-decoder = true
+setups = 10;
 
 path_prefix = "../../data/measurements";
+
+% Set to true to use "decoder" file instead of "source" file
+decoder = true;
 
 if decoder
      file_prefix = "decoder";
@@ -22,11 +22,15 @@ rssi = zeros(setups, measurements);
 phase = zeros(setups, measurements);
 
 % più o meno l'rn16 si è trovato in queste posizioni per tutte le misure fatte
-rn16_idx = [32000, 47000, 62000];
+rn16_idx = [32000]; %, 47000, 62000, 77200, 92200];
 rn16len = 1150;
-
-epc_idx = [36200, 51400, 66400];
+epc_idx = [36300];
 epclen = 6750;
+% True if we analyse the entire signal and not only the RN16
+complete_analysis = false;
+% else only use RN16 or EPC
+% if true, use epc, otherwise use rn16
+epc = true;
 
 % Set to true to plot specific signals
 plot_signals = false;
@@ -35,12 +39,6 @@ plot_scatter = true;
 
 % Avoids doing calculations, for debug purposes
 calculate = true;
-
-% True if we analyse the entire signal and not only the RN16
-complete_analysis = false;
-% else only use RN16 or EPC
-% if true, use epc, otherwise use rn16
-epc = false;
 
 for s = 1:setups
 
@@ -64,7 +62,7 @@ for s = 1:setups
 
           % Plot signals in time
           if plot_signals
-               subplot(5, 2, m);
+               subplot(ceil(sqrt(measurements)), floor(sqrt(measurements)), m);
                plot(abs(x), "b");
                xlim([0, 260000]);
           end
@@ -86,7 +84,7 @@ for s = 1:setups
                     start = epc_idx(i);
                     stop = start + epclen;
                     part = x(start:stop);
-                    EPC =      vertcat(EPC, part );
+                    EPC = vertcat(EPC, part );
                end
           end
 
@@ -118,14 +116,14 @@ for s = 1:setups
 
           if calculate
                opts = statset('Display','final');
-               [idx,C] = kmeans(X,2,'Distance','cityblock',...
-               'Replicates',5,'Options',opts);
+               [idx,C] = kmeans(X,2, 'Distance','cityblock',...
+               'Replicates',10, 'Start', 'uniform', 'Options',opts);
           end
 
           % Set to true to show scatter plots
           if calculate && plot_scatter
                %figure
-               subplot(5, 2, m);
+               subplot(ceil(sqrt(measurements)), floor(sqrt(measurements)), m);
                grid on
                plot(X(idx==1,1),X(idx==1,2),'r.','MarkerSize',12)
                hold on
@@ -153,56 +151,60 @@ for s = 1:setups
 
 end
 
-% Print header
-fprintf('\nRSSI (dB)\t');
-for i = 1:measurements
-     fprintf("%-5d\t", i);
-end
-fprintf("\n");
-
-% Print data
-for i = 1:setups
-     % print header
-     fprintf('%-10d\t', i);
-     for k = 1:measurements
-          fprintf("%-4.1f\t", rssi(i, k));
+% only print if we calculated the values
+if calculate
+     % Print header
+     fprintf('\nRSSI (dB)\t');
+     for i = 1:measurements
+          fprintf("%-5d\t", i);
      end
      fprintf("\n");
-end
 
-figure
-hold on
-grid on
-for s = 1:setups
-     row = rssi(s, :);
-     plot(row);
-end
-title("RSSI(db)");
+     % Print data
+     for i = 1:setups
+          % print header
+          fprintf('%-10d\t', i);
+          for k = 1:measurements
+               fprintf("%-4.1f\t", rssi(i, k));
+          end
+          fprintf("\n");
+     end
 
-%----------------------------------------------
+     figure
+     hold on
+     grid on
+     for s = 1:setups
+          row = rssi(s, :);
+          plot(row);
+     end
+     title("RSSI(db)");
 
-% Print header
-fprintf('\nPHASE (grad)\t');
-for i = 1:measurements
-     fprintf("%-5d\t", i);
-end
-fprintf("\n");
+     %----------------------------------------------
 
-% Print data
-for i = 1:setups
-     % print header
-     fprintf('%-10d\t', i);
-     for k = 1:measurements
-          fprintf("%-4.1f°\t", phase(i, k));
+     % Print header
+     fprintf('\nPHASE (grad)\t');
+     for i = 1:measurements
+          fprintf("%-5d\t", i);
      end
      fprintf("\n");
-end
 
-figure
-hold on
-grid on
-for s = 1:setups
-     row = phase(s, :);
-     plot(row);
+     % Print data
+     for i = 1:setups
+          % print header
+          fprintf('%-10d\t', i);
+          for k = 1:measurements
+               fprintf("%-4.1f°\t", phase(i, k));
+          end
+          fprintf("\n");
+     end
+
+     figure
+     hold on
+     grid on
+     for s = 1:setups
+          row = phase(s, :);
+          plot(row);
+     end
+     title("Phase(deg)");
+
 end
-title("Phase(deg)");

@@ -24,6 +24,11 @@ x2i = imag(x2);
 %hold on
 %plot(x2r, "b");
 %plot(x2i, "r");
+%figure
+%hold on
+%plot(abs(x2), "magenta");
+%plot(x2r, "b");
+%plot(x2i, "r");
 
 %figure
 %plot(x2r, x2i, "o");
